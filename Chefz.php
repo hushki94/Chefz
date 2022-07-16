@@ -21,47 +21,50 @@ class Chefz
 
     public function levenshtein_dis($a, $b)
     {
-        $lowA = 0;
-        $highA = strlen($a) - 1 ;
-        $lowB = 0;
-        $highB = strlen($b) - 1;
-
-        $counter = 0;
-
-        while($lowA <= $highA || $lowB <= $highB){
-            if($a[$lowA] !== $b[$lowB]){
-                if($b[$lowB] === " "){
-                    $a = substr_replace($a, "", $lowA, 1);
-                    $highA--;
-                    $counter++;
-                }else{
-                    $a = substr_replace($a, $b[$lowB], $lowA, 1);
-                    $counter++;
-                }
-                
+        $grid = [];
+        //first we make a function to make a grid (matrix columns and rows) of the length of the two strings
+        for ($i = 0; $i < strlen($a) + 1; $i++) {
+            $row = [];
+            for ($j = 0; $j < strlen($b) + 1; $j++) {
+                array_push($row, $j);
             }
-            if($a[$highA] !== $b[$highB]){
-                if($b[$highB] === " "){
-                    $a = substr_replace($a, "", $highA, 1);
-                    $highA--;
-                    $counter++;
-                }else{
-                    $a = substr_replace($a, $b[$highB], $lowA, 1);
-                    $counter++;
-                }
-                
-            }
-            $lowA++;
-            $lowB++;
-            $highB--;
-            $highA--;
+            $row[0] = $i;
+            array_push($grid, $row);
         }
-        return $a;
+
+
+        //here we compare the grid as the example below
+        for ($i = 1; $i < strlen($a) + 1; $i++) {
+            for ($j = 1; $j < strlen($b) + 1; $j++) {
+                if ($a[$i - 1] === $b[$j - 1]) {
+                    $grid[$i][$j] = $grid[$i - 1][$j - 1];
+                } else {
+                    $grid[$i][$j] = 1 + min($grid[$i - 1][$j - 1], $grid[$i][$j - 1], $grid[$i - 1][$j]);
+                }
+            }
+        }
+        return $grid[strlen($a)][strlen($b)];
     }
+    
 }
 
-$r = new Chefz();
-$hamming = $r->hamming_dis("dogandcat", "catanddog");
-$levenshtien = $r->levenshtein_dis("this is a test", "the is te;st");
-// echo $result;
-echo $levenshtien;
+
+/*
+transform omar to roma:
+
+            "" o m a r
+          "" 0 1 2 3 4
+          r  1 1 2 3 3 
+          o  2 1 2 3 4
+          m  3 2 1 2 3
+          a  4 3 2 1 2 --> 2 is our target
+
+*/
+
+$result = new Chefz();
+$hamming = $result->hamming_dis($_POST['ham_1'], $_POST['ham_2']);
+$levenshtien = $result->levenshtein_dis($_POST['lev_1'], $_POST["lev_2"]);
+
+echo "<h1>hamming:</h1>" . $hamming;
+echo "<br>";
+echo "<h1>levenshtein:</h1>" . $levenshtien;
