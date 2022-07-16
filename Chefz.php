@@ -21,23 +21,47 @@ class Chefz
 
     public function levenshtein_dis($a, $b)
     {
+        $lowA = 0;
+        $highA = strlen($a) - 1 ;
+        $lowB = 0;
+        $highB = strlen($b) - 1;
+
         $counter = 0;
 
-        $len = strlen($a) + abs(strlen($a) - strlen($b));
-        for ($i = 0; $i < $len; $i++) {
-            if ($a[$i] !== $b[$i]) {
-                //we should remove the character 
-                $a = substr_replace($a, $b[$i], $i, 1);
-                // we should stop b index increment
-                $counter++;
+        while($lowA <= $highA || $lowB <= $highB){
+            if($a[$lowA] !== $b[$lowB]){
+                if($b[$lowB] === " "){
+                    $a = substr_replace($a, "", $lowA, 1);
+                    $highA--;
+                    $counter++;
+                }else{
+                    $a = substr_replace($a, $b[$lowB], $lowA, 1);
+                    $counter++;
+                }
+                
             }
+            if($a[$highA] !== $b[$highB]){
+                if($b[$highB] === " "){
+                    $a = substr_replace($a, "", $highA, 1);
+                    $highA--;
+                    $counter++;
+                }else{
+                    $a = substr_replace($a, $b[$highB], $lowA, 1);
+                    $counter++;
+                }
+                
+            }
+            $lowA++;
+            $lowB++;
+            $highB--;
+            $highA--;
         }
         return $a;
     }
 }
 
 $r = new Chefz();
-$hamming = $r->hamming_dis("dogandcat" , "catanddog");
-$levenshtien = $r->levenshtein_dis("this is a test" , "this is test");
+$hamming = $r->hamming_dis("dogandcat", "catanddog");
+$levenshtien = $r->levenshtein_dis("this is a test", "the is te;st");
 // echo $result;
 echo $levenshtien;
