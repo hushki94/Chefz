@@ -41,3 +41,12 @@
 
 </body>
 </html>
+
+<!-- 
+To run this code please follow these instructions:
+     1. Clone this code from the github
+     2. Create new folder 
+     3. Inside the new folder, open the terminal and clone the url that you copy from the github in step 1 
+     4. After the content installed run this command : php -S localhost:8000
+     5. You can submit 2 forms ( hamming and levenshtein ) and the result will appear.
+-->
